@@ -1,0 +1,45 @@
+Sub find_copy_from_email()
+
+    Dim objOL As Outlook.Application
+    Dim objFolder As Outlook.MAPIFolder
+    Dim objItems As Outlook.Items
+    Dim olItem As Outlook.MailItem
+    Dim sText As String
+    Dim rilevante As String
+    Dim sUrl As String
+    Dim rCount As Long
+    Dim research As String
+ 
+    Set objOL = Outlook.Application
+    Set objFolder = objOL.ActiveExplorer.CurrentFolder
+    Set objItems = objFolder.Items
+    
+    'insert the string you are looking for
+    research = "www.crunchbase.com/organization"
+    'insert the string left bound
+    end_search = "?utm_source"
+    
+ 
+    rCount = 1
+    For Each olItem In objItems
+        On Error Resume Next
+        With olItem
+        
+            sText = olItem.Body
+            If InStr(sText, research) <> 0 Then
+                rilevante = sText
+               
+               Do While InStr(rilevante, research) <> 0
+                    rilevante = Right(rilevante, Len(rilevante) - InStr(rilevante, research))
+                    sUrl = Left(rilevante, InStr(rilevante, end_serach) - 1)
+                    
+                    Cells(rCount, 1).Value = sUrl
+                    rilevante = Right(rilevante, Len(rilevante) - InStr(rilevante, sUrl) - Len(sUrl))
+                  
+                    rCount = rCount + 1
+                Loop
+            End If
+        End With
+    Next
+ 
+End Sub
